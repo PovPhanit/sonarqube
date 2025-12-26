@@ -2,7 +2,7 @@ name: Node CI + Local SonarQube
 
 on:
   push:
-    branches: [main]
+    branches: [master]
 
 jobs:
   sonar:
