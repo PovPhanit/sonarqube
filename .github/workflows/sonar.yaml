@@ -1,4 +1,4 @@
-name: Node CI + Local SonarQube
+name: Node CI + Locals SonarQube
 
 on:
   push:
