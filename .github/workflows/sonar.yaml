@@ -28,4 +28,4 @@ jobs:
         with:
           projectKey: node-api
           organization: my-org
-          token: sqa_50a001be64f6b116af70b939759a95534ac7a1d2
+          token: ${{ secrets.SONAR_TOKEN }}
