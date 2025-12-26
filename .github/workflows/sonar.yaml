@@ -1,4 +1,4 @@
-name: Node.js CI + SonarQube
+name: Node.js CI + SonarQubej
 
 on:
   push:
