@@ -41,7 +41,7 @@ jobs:
           SONAR_HOST_URL: http://localhost:9000
 
       - name: 📧 Send Email if FAILED
-        if: steps.gate.conclusion == 'failure'
+        if: steps.gate.conclusion == 'success'
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -57,5 +57,5 @@ jobs:
           from: SonarQube CI
 
       - name: ⛔ Stop Pipeline
-        if: steps.gate.conclusion == 'failure'
+        if: steps.gate.conclusion == 'success'
         run: exit 1
