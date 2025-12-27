@@ -27,7 +27,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           sonar-scanner \
-            -Dsonar.projectKey=node-api \
+            -Dsonar.projectKey=node-api2 \
             -Dsonar.sources=. \
             -Dsonar.host.url=http://localhost:9000 \
             -Dsonar.token=$SONAR_TOKEN \
