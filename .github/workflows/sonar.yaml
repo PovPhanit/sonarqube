@@ -1,28 +1,27 @@
-name: Node.js CI + SonarQubej
+name: Node.js CI + SonarQube
 
 on:
   push:
-    branches: [master]
+    branches: [ master ]
   pull_request:
-    branches: [master]
+    branches: [ master ]
 
 jobs:
   build:
     runs-on: self-hosted
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20.x
+          node-version: 18
 
       - name: Install dependencies
         run: npm install
-        
-        
-      - name: Run SonarQube scan
+
+      - name: Run SonarQube Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
@@ -31,18 +30,18 @@ jobs:
             -Dsonar.sources=. \
             -Dsonar.host.url=http://localhost:9000 \
             -Dsonar.token=$SONAR_TOKEN \
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+            -Dsonar.qualitygate.wait=true
 
       - name: Quality Gate Check
         id: gate
-        uses: sonarsource/sonarqube-quality-gate-action@v1.1
-        continue-on-error: true
+        uses: sonarsource/sonarqube-quality-gate-action@v1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: http://localhost:9000
 
-      # 📧 EMAIL ALERT ON FAIL
-      - name: Send Email if FAILED
-        if: steps.gate.outcome == 'failure'
+      - name: 📧 Send Email if FAILED
+        if: steps.gate.conclusion == 'failure'
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -51,12 +50,12 @@ jobs:
           password: ${{ secrets.EMAIL_PASS }}
           subject: 🚨 SonarQube Quality Gate FAILED
           body: |
-            Project: my-project
+            Project: node-api3
             Status: FAILED
-            Check SonarQube dashboard.
+            Please check SonarQube dashboard.
           to: povphanit9@gmail.com
           from: SonarQube CI
 
-      - name: Stop Pipeline
-        if: steps.gate.outcome == 'failure'
+      - name: ⛔ Stop Pipeline
+        if: steps.gate.conclusion == 'failure'
         run: exit 1
