@@ -32,3 +32,31 @@ jobs:
             -Dsonar.host.url=http://localhost:9000 \
             -Dsonar.token=$SONAR_TOKEN \
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+
+      - name: Quality Gate Check
+        id: gate
+        uses: sonarsource/sonarqube-quality-gate-action@v1.1
+        continue-on-error: true
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      # 📧 EMAIL ALERT ON FAIL
+      - name: Send Email if FAILED
+        if: steps.gate.outcome == 'failure'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USER }}
+          password: ${{ secrets.EMAIL_PASS }}
+          subject: 🚨 SonarQube Quality Gate FAILED
+          body: |
+            Project: my-project
+            Status: FAILED
+            Check SonarQube dashboard.
+          to: povphanit9@gmail.com
+          from: SonarQube CI
+
+      - name: Stop Pipeline
+        if: steps.gate.outcome == 'failure'
+        run: exit 1
